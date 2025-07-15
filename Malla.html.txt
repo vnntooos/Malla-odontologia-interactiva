@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Malla Curricular Odontología</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #FFF5F7;
+      margin: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .semestre {
+      background-color: #FFCCCB;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .semestre h3 {
+      text-align: center;
+      color: #FF8BA0;
+    }
+
+    .ramo {
+      background-color: #FEA8B5;
+      margin: 5px 0;
+      padding: 6px;
+      border-radius: 6px;
+    }
+
+    .ramo input[type="checkbox"] {
+      margin-right: 5px;
+    }
+
+    .disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>odontologia</h1>
+  <div class="grid" id="malla"></div>
+
+  <script>
+    const cursos = [
+      // SEMESTRE 1
+      {codigo: "ODON_A001", nombre: "Introducción a la Odontología", semestre: 1, prerequisitos: []},
+      {codigo: "ODON_A002", nombre: "Matemática y Física Aplicada", semestre: 1, prerequisitos: []},
+      {codigo: "DBIO_1070", nombre: "Biología Celular", semestre: 1, prerequisitos: []},
+      {codigo: "DQUI_1036", nombre: "Química General y Orgánica", semestre: 1, prerequisitos: []},
+      {codigo: "DMOR_0003", nombre: "Anatomía Humana", semestre: 1, prerequisitos: []},
+      {codigo: "ASIGESAP01", nombre: "Estrategias para el Aprendizaje", semestre: 1, prerequisitos: []},
+
+      // SEMESTRE 2
+      {codigo: "ODON_B001", nombre: "Promoción y Prevención en Salud", semestre: 2, prerequisitos: ["ODON_A001"]},
+      {codigo: "DBIO_1071", nombre: "Biología Molecular y Genética", semestre: 2, prerequisitos: ["DBIO_1070"]},
+      {codigo: "DBIO_1076", nombre: "Bioquímica General", semestre: 2, prerequisitos: ["DBIO_1070", "DQUI_1036"]},
+      {codigo: "DMOR_0006", nombre: "Anatomía de Cabeza y Cuello", semestre: 2, prerequisitos: ["DMOR_0003"]},
+      {codigo: "DMOR_0011", nombre: "Histoembriología", semestre: 2, prerequisitos: ["DBIO_1070"]},
+      {codigo: "FILS_0001", nombre: "Antropología", semestre: 2, prerequisitos: []},
+
+      // SEMESTRE 3
+      {codigo: "ODON_C001", nombre: "Preclínico y Materiales Dentales I", semestre: 3, prerequisitos: ["ODON_B001", "DMOR_0006"]},
+      {codigo: "ODON_C002", nombre: "Histología Oral", semestre: 3, prerequisitos: ["DMOR_0006", "DMOR_0011"]},
+      {codigo: "DBIO_1072", nombre: "Microbiología General", semestre: 3, prerequisitos: ["DBIO_1071"]},
+      {codigo: "DBIO_1075", nombre: "Fisiología Humana", semestre: 3, prerequisitos: ["DBIO_1071", "DMOR_0006"]},
+      {codigo: "DSPU_0001", nombre: "Salud Poblacional", semestre: 3, prerequisitos: ["ODON_B001"]},
+      {codigo: "FILS_0002", nombre: "Ética", semestre: 3, prerequisitos: ["FILS_0001"]},
+
+      // SEMESTRE 4
+      {codigo: "ODON_D001", nombre: "Preclínico y Materiales Dentales II", semestre: 4, prerequisitos: ["ODON_C001"]},
+      {codigo: "ODON_D002", nombre: "Simulación Clínica Integral I", semestre: 4, prerequisitos: ["ODON_C001"]},
+      {codigo: "ODON_D003", nombre: "Cariología y Microbiología Oral", semestre: 4, prerequisitos: ["ODON_C002", "DBIO_1072", "DBIO_1076"]},
+      {codigo: "ODON_D004", nombre: "Fisiología Oral", semestre: 4, prerequisitos: ["DBIO_1075", "DMOR_0006"]},
+      {codigo: "ODON_D005", nombre: "Patología General", semestre: 4, prerequisitos: ["DBIO_1075"]},
+      {codigo: "DBIO_1040", nombre: "Farmacología I", semestre: 4, prerequisitos: ["DBIO_1075", "DBIO_1076"]},
+      {codigo: "ELEFORIN01", nombre: "Electivo de Formación Integral I", semestre: 4, prerequisitos: ["FILS_0002"]},
+
+      // SEMESTRE 5
+      {codigo: "ODON_E001", nombre: "Preclínico y Rehabilitación Oral I", semestre: 5, prerequisitos: ["ODON_D001", "ODON_D002", "ODON_D003"]},
+      {codigo: "ODON_E002", nombre: "Simulación Clínica Integral II", semestre: 5, prerequisitos: ["ODON_D001", "ODON_D002", "ODON_D003", "ODON_D004"]},
+      {codigo: "ODON_E003", nombre: "Inicio a la Clínica Integral I", semestre: 5, prerequisitos: ["ODON_D001", "ODON_D002", "ODON_D003", "ODON_D004"]},
+      {codigo: "ODON_E004", nombre: "Imagenología Diagnóstica I", semestre: 5, prerequisitos: ["ODON_D001", "ODON_D002", "ODON_D004"]},
+      {codigo: "ODON_E005", nombre: "Patología Oral I", semestre: 5, prerequisitos: ["ODON_D003", "ODON_D005"]},
+      {codigo: "DBIO_1041", nombre: "Farmacología II", semestre: 5, prerequisitos: ["DBIO_1040"]},
+      {codigo: "DMAE_E003", nombre: "Estadística", semestre: 5, prerequisitos: ["ODON_A002"]},
+      {codigo: "DSPU_0006", nombre: "Bioética", semestre: 5, prerequisitos: ["ODON_D002"]},
+
+      // SEMESTRE 6
+      {codigo: "ODON_F001", nombre: "Preclínico y Rehabilitación Oral II", semestre: 6, prerequisitos: ["ODON_E001", "ODON_E002"]},
+      {codigo: "ODON_F002", nombre: "Simulación Clínica Integral III", semestre: 6, prerequisitos: ["ODON_E001", "ODON_E002"]},
+      {codigo: "ODON_F003", nombre: "Inicio a la Clínica Integral II", semestre: 6, prerequisitos: ["ODON_E003"]},
+      {codigo: "ODON_F004", nombre: "Imagenología Diagnóstica II", semestre: 6, prerequisitos: ["ODON_E004"]},
+      {codigo: "ODON_F005", nombre: "Patología Oral II", semestre: 6, prerequisitos: ["ODON_E005"]},
+      {codigo: "ODON_F006", nombre: "Introducción a la Clínica", semestre: 6, prerequisitos: ["ODON_E001", "ODON_E002"]},
+      {codigo: "ELEFORIN02", nombre: "Electivo de Formación Integral II", semestre: 6, prerequisitos: []},
+
+      // SEMESTRE 7
+      {codigo: "ODON_G001", nombre: "Operatoria y Rehabilitación Oral I", semestre: 7, prerequisitos: ["DBIO_1041", "ODON_F001", "ODON_F002", "ODON_F003", "ODON_F004", "ODON_F005", "ODON_F006"]},
+      {codigo: "ODON_G002", nombre: "Estomatología I", semestre: 7, prerequisitos: ["DBIO_1041", "ODON_F001", "ODON_F002", "ODON_F003", "ODON_F004", "ODON_F005", "ODON_F006"]},
+      {codigo: "ODON_G003", nombre: "Clínica Integrada del Adulto I", semestre: 7, prerequisitos: ["DBIO_1041", "ODON_F001", "ODON_F002", "ODON_F003", "ODON_F004", "ODON_F005", "ODON_F006"]},
+      {codigo: "ODON_G004", nombre: "Clínica Integrada del Niño y Adolescente I", semestre: 7, prerequisitos: ["DBIO_1041", "ODON_F001", "ODON_F002", "ODON_F003", "ODON_F004", "ODON_F005", "ODON_F006"]},
+      {codigo: "ELEFORIN03", nombre: "Electivo de Formación Integral III", semestre: 7, prerequisitos: []},
+
+      // SEMESTRE 8
+      {codigo: "ODON_H001", nombre: "Operatoria y Rehabilitación Oral II", semestre: 8, prerequisitos: ["ODON_G001"]},
+      {codigo: "ODON_H002", nombre: "Estomatología II", semestre: 8, prerequisitos: ["ODON_G002"]},
+      {codigo: "ODON_H003", nombre: "Clínica Integrada del Adulto II", semestre: 8, prerequisitos: ["ODON_G001", "ODON_G002", "ODON_G003"]},
+      {codigo: "ODON_H004", nombre: "Clínica Integrada del Niño y Adolescente II", semestre: 8, prerequisitos: ["ODON_G004"]},
+      {codigo: "DSPU_0003", nombre: "Epidemiología", semestre: 8, prerequisitos: ["DSPU_0001"]},
+
+      // SEMESTRE 9
+      {codigo: "ODON_I001", nombre: "Rehabilitación Oral y Protésica I", semestre: 9, prerequisitos: ["ODON_H001"]},
+      {codigo: "ODON_I002", nombre: "Estomatología III", semestre: 9, prerequisitos: ["ODON_H002"]},
+      {codigo: "ODON_I003", nombre: "Clínica Integrada del Adulto y Gerodontología I", semestre: 9, prerequisitos: ["ODON_H001", "ODON_H002", "ODON_H003"]},
+      {codigo: "ODON_I004", nombre: "Clínica Integrada del Niño y Adolescente III", semestre: 9, prerequisitos: ["ODON_H004"]},
+      {codigo: "ELEFORIN04", nombre: "Electivo de Formación Integral IV", semestre: 9, prerequisitos: []},
+
+      // SEMESTRE 10
+      {codigo: "ODON_J001", nombre: "Rehabilitación Oral y Protésica II", semestre: 10, prerequisitos: ["ODON_I001"]},
+      {codigo: "ODON_J002", nombre: "Estomatología IV", semestre: 10, prerequisitos: ["ODON_I002"]},
+      {codigo: "ODON_J003", nombre: "Clínica Integrada del Adulto y Gerodontología II", semestre: 10, prerequisitos: ["ODON_I001", "ODON_I002", "ODON_I003"]},
+      {codigo: "ODON_J004", nombre: "Clínica integrada del Niño y Adolescente IV", semestre: 10, prerequisitos: ["ODON_I004"]},
+      {codigo: "ODON_J005", nombre: "Taller de Resolución de Casos Clínicos", semestre: 10, prerequisitos: ["ODON_H003", "ODON_H004"]},
+      {codigo: "DSPU_0005", nombre: "Metodología de la Investigación", semestre: 10, prerequisitos: ["DMAE_E003"]},
+
+      // SEMESTRE 11
+      {codigo: "ODON_K001", nombre: "Gestión e Innovación en Odontología", semestre: 11, prerequisitos: ["ODON_H003"]},
+      {codigo: "ODON_K002", nombre: "Odontología Forense", semestre: 11, prerequisitos: ["ODON_H003"]},
+      {codigo: "ODON_K003", nombre: "Taller de Salud Comunitaria", semestre: 11, prerequisitos: ["ODON_J001", "ODON_J002", "ODON_J003", "ODON_J004", "ODON_J005", "DSPU_0005"]},
+      {codigo: "ODON_K004", nombre: "Taller de Investigación Aplicada", semestre: 11, prerequisitos: ["ODON_J001", "ODON_J002", "ODON_J003", "ODON_J004", "ODON_J005", "DSPU_0005"]},
+      {codigo: "ENFESD01", nombre: "Salud Digital", semestre: 11, prerequisitos: ["ODON_H003"]},
+
+      // SEMESTRE 12
+      {codigo: "ODON_L001", nombre: "Internado Clínico Asistencial", semestre: 12, prerequisitos: ["ODON_J001", "ODON_J002", "ODON_J003", "ODON_J004", "ODON_J005", "DSPU_0005"]},
+
+    ];
+
+    const estadoCursos = {};
+
+    function crearMalla() {
+      const malla = document.getElementById('malla');
+      for (let i = 1; i <= 12; i++) {
+        const col = document.createElement('div');
+        col.classList.add('semestre');
+        col.innerHTML = `<h3>Semestre ${i}</h3>`;
+        cursos.filter(c => c.semestre === i).forEach(curso => {
+          const div = document.createElement('div');
+          div.className = 'ramo disabled';
+          div.innerHTML = `
+            <label>
+              <input type="checkbox" disabled onchange="marcarCurso('${curso.codigo}')" id="${curso.codigo}"> ${curso.nombre}
+            </label>
+          `;
+          col.appendChild(div);
+        });
+        malla.appendChild(col);
+      }
+      actualizarEstado();
+    }
+
+    function marcarCurso(codigo) {
+      estadoCursos[codigo] = document.getElementById(codigo).checked;
+      actualizarEstado();
+    }
+
+    function actualizarEstado() {
+      cursos.forEach(curso => {
+        const input = document.getElementById(curso.codigo);
+        const div = input.closest(".ramo");
+
+        const prerequisitosCumplidos = curso.prerequisitos.every(p => estadoCursos[p]);
+        if (prerequisitosCumplidos || curso.prerequisitos.length === 0) {
+          input.disabled = false;
+          div.classList.remove('disabled');
+        } else {
+          input.disabled = true;
+          input.checked = false;
+          estadoCursos[curso.codigo] = false;
+          div.classList.add('disabled');
+        }
+      });
+    }
+
+    crearMalla();
+  </script>
+</body>
+
+</html>
